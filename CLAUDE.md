@@ -50,7 +50,7 @@ Everything is string-concatenated `innerHTML`. Content is intentionally treated 
 
 Navigation is two delegated `click` listeners on `document`, dispatching on data attributes: `data-go` (route to a module / `home` / `mock`), `data-done` (toggle completion), `data-qa` (expand an answer), and a separate listener for the `data-mock-*` family. There is no URL/hash routing — state lives in the `current` variable.
 
-Module completion is a plain in-memory `Set` and **resets on reload by design**. There is no `localStorage`. Don't add persistence without asking.
+Module completion is a plain in-memory `Set` and **resets on reload by design** — don't add persistence to it without asking. The one thing that *does* persist is the dark/light theme choice (`localStorage` key `de-theme`, set in `setTheme()`, read by `initTheme()` which falls back to the OS `prefers-color-scheme`).
 
 ### Mock interview engine
 

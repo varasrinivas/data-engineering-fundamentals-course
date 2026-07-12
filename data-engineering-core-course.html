@@ -1475,9 +1475,18 @@ let current = 'home';
 const $ = sel => document.querySelector(sel);
 const sidebar = $('#sidebar'), content = $('#content');
 
-// theme is in-memory only (defaults to the OS preference), matching the no-persistence design
+// theme persists in localStorage; falls back to the OS preference on first visit
 const isDark = () => document.documentElement.getAttribute('data-theme') === 'dark';
-const setTheme = t => document.documentElement.setAttribute('data-theme', t);
+function setTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  try { localStorage.setItem('de-theme', t); } catch(e) {}
+}
+function initTheme(){
+  let saved = null;
+  try { saved = localStorage.getItem('de-theme'); } catch(e) {}
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  setTheme(saved || (prefersDark ? 'dark' : 'light'));
+}
 function toggleTheme(){ setTheme(isDark() ? 'light' : 'dark'); renderSidebar(); }
 // Explicit pedagogical order — numbering follows this, not array insertion order
 const ORDER = ['why-de','big-data','evolution','oltp-olap','nosql-cap','sharding','etl-elt','dim-modeling','scd','lake-wh','medallion','formats','partitioning','keys-index-hash','spark','sql-de','performance','batch-stream','kafka','cdc','orchestration','idempotency','quality','governance','metadata-driven','system-design'];
@@ -1577,7 +1586,7 @@ document.addEventListener('click', e=>{
   if(e.target.id==='menubtn'){ sidebar.classList.toggle('open'); }
 });
 
-setTheme(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+initTheme();
 go('home');
 /* ================= MOCK INTERVIEW ENGINE ================= */
 // Build the question bank from every module's embedded Q&A (88 questions)
